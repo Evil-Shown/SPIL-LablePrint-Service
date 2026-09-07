@@ -1,0 +1,18 @@
+{
+  "customerName": "VAHID HELDOV",
+  "batchNumber": "38551",
+  "orderNumber": "L-69515",
+  "sheetCount": "3 / 12",
+  "pieceDescription": "6mm Clear Float",
+  "area": "1.20 m2",
+  "weight": "12 kg",
+  "services": "Flat Polish",
+  "id": "12",
+  "pickupDate": "Tue 1/9",
+  "transportType": "R4",
+  "custPO": "DS-002",
+  "marks": "FRONT",
+  "Barcode": "L-69515-1",
+  "note2": { "field10": "CUT > EDG > TEM" },
+  "note3": { "field1": "ACME GLASS", "field6": "TGH" }
+}

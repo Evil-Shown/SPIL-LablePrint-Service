@@ -1,0 +1,16 @@
+---
+description: Opti and ERP are independent clients with separate templates
+alwaysApply: true
+---
+
+# Two first-class clients
+
+This service compiles labels for **Opti** and **ERP**. Same HTTP API, **different templates and field bags**.
+
+- Never assume ERP uses Opti’s Labels JSON, or that Opti uses metro.
+- Request `client`: `opti` | `erp`. Echo it on the response. Do not infer a template from the other client.
+- `layout: "metro"` → built-in ERP glass layout only. Ignore any `template` on that request.
+- `layout: "template"` → compile **only** the `template` + `labelData` in that request (Opti or ERP file — they will differ).
+- Do not hardcode Opti field keys (`note2.field10`, machines checklist) into the ERP metro path.
+- Keep both `payload` and `zpl` on compile responses.
+---

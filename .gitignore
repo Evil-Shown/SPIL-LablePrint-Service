@@ -1,0 +1,10 @@
+bin/
+obj/
+logs/
+*.user
+.vs/
+publish/
+dist/
+*.zpl
+samples/erp-last-job.txt
+
