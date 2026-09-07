@@ -24,6 +24,7 @@ public static class MetroZplBuilder
         sb.AppendLine("^LH0,0");
         sb.AppendLine("^LS0");
         sb.AppendLine("^PON");
+        sb.AppendLine("^PQ1");
 
         sb.AppendLine(Box(stock, left, stock.MarginMm, 29, 11, 0.25));
         sb.AppendLine(Text(stock, left, stock.MarginMm + 4, 29, 2.75, "[CLIENT LOGO]", false, 'C'));

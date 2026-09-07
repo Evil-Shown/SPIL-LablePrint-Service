@@ -19,6 +19,7 @@ public sealed class PrinterTcpSender
         client.ReceiveTimeout = 8000;
         client.Connect(host, port);
         using var stream = client.GetStream();
+        zpl = ZplUtil.ForceOneCopy(zpl);
         var bytes = Encoding.UTF8.GetBytes(zpl);
         stream.Write(bytes, 0, bytes.Length);
         stream.Flush();

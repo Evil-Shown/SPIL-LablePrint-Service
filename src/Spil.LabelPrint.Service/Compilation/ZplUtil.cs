@@ -97,4 +97,41 @@ internal static class ZplUtil
 
     public static string Fmt(string format, params object[] args) =>
         string.Format(CultureInfo.InvariantCulture, format, args);
+
+    /// <summary>
+    /// Zebra/Honeywell reuse the last reprint count when ^PQ is omitted.
+    /// Two labels with a stored count of 3 become six physical copies.
+    /// </summary>
+    public static string ForceOneCopy(string zpl)
+    {
+        if (string.IsNullOrEmpty(zpl) ||
+            zpl.IndexOf("^XA", StringComparison.OrdinalIgnoreCase) < 0)
+            return zpl ?? "";
+
+        var sb = new StringBuilder(zpl.Length + 32);
+        for (var i = 0; i < zpl.Length; i++)
+        {
+            if (zpl[i] == '^' && i + 2 < zpl.Length)
+            {
+                var a = char.ToUpperInvariant(zpl[i + 1]);
+                var b = char.ToUpperInvariant(zpl[i + 2]);
+                if (a == 'P' && b == 'Q')
+                {
+                    i += 3;
+                    while (i < zpl.Length && zpl[i] is not '^' and not '\n' and not '\r')
+                        i++;
+                    i--;
+                    continue;
+                }
+                if (a == 'X' && b == 'Z')
+                {
+                    sb.Append("^PQ1\n^XZ");
+                    i += 2;
+                    continue;
+                }
+            }
+            sb.Append(zpl[i]);
+        }
+        return sb.ToString();
+    }
 }

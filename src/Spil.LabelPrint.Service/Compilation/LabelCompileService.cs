@@ -47,6 +47,8 @@ public sealed class LabelCompileService
         }
 
         payload = LabelJobEncoder.Encode(payload, language, widthMm, heightMm, dpmm);
+        if (language is "zpl" or "")
+            payload = ZplUtil.ForceOneCopy(payload);
 
         return new CompileLabelResponse
         {

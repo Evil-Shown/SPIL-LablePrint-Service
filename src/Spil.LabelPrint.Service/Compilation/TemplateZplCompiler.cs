@@ -39,6 +39,7 @@ public static class TemplateZplCompiler
         sb.AppendLine("^LH0,0");
         sb.AppendLine("^LS0");
         sb.AppendLine("^PON");
+        sb.AppendLine("^PQ1");
 
         foreach (var field in CollectFields(template))
         {
