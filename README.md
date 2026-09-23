@@ -767,6 +767,22 @@ $env:DOTNET_ROLL_FORWARD = "LatestMajor"
 
 API allows any origin (for browser tools). Production LAN clients (Opti desktop, ERP server) are not browsers — CORS does not apply.
 
+### Label Crafter template storage
+
+Saved designer templates are runtime data, not source files. With
+`Designer:TemplateRoot` empty, the service stores them under:
+
+```text
+%ProgramData%\SPIL\LabelPrintService\designer-templates\opti
+%ProgramData%\SPIL\LabelPrintService\designer-templates\erp
+```
+
+Set `Designer__TemplateRoot` (environment variable) or
+`Designer:TemplateRoot` in `appsettings.json` to override the location. On the
+first startup after upgrading, templates from the old content-root
+`designer-templates` folder are copied into the new persistent location.
+Grant the IIS application-pool identity Modify permission on a custom folder.
+
 ---
 
 ## Quick checklist

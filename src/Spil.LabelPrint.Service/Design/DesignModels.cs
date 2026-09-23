@@ -18,6 +18,8 @@ public sealed class DesignSessionRequest
     public string? ReturnApp { get; set; }
     public List<FieldCatalogItem>? FieldCatalog { get; set; }
     public JsonElement? PreviewData { get; set; }
+    /// <summary>Optional Labels JSON from Opti/ERP so the designer opens the layout being edited.</summary>
+    public JsonElement? Template { get; set; }
 }
 
 public sealed class DesignSessionResponse

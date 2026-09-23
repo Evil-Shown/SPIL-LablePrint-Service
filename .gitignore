@@ -7,4 +7,5 @@ publish/
 dist/
 *.zpl
 samples/erp-last-job.txt
+src/Spil.LabelPrint.Service/designer-templates/
 

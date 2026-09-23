@@ -23,13 +23,50 @@ public sealed class DesignStore
     public DesignStore(IConfiguration config, IWebHostEnvironment env)
     {
         var configured = config["Designer:TemplateRoot"];
-        _root = string.IsNullOrWhiteSpace(configured)
-            ? Path.Combine(env.ContentRootPath, "designer-templates")
-            : configured;
+        _root = ResolveTemplateRoot(configured, env.ContentRootPath);
         Directory.CreateDirectory(Path.Combine(_root, "opti"));
         Directory.CreateDirectory(Path.Combine(_root, "erp"));
+        MigrateLegacyTemplates(env.ContentRootPath);
         var minutes = config.GetValue("Designer:SessionMinutes", 120);
         _sessionTtl = TimeSpan.FromMinutes(Math.Clamp(minutes, 5, 24 * 60));
+    }
+
+    private static string ResolveTemplateRoot(string? configured, string contentRoot)
+    {
+        if (!string.IsNullOrWhiteSpace(configured))
+        {
+            var expanded = Environment.ExpandEnvironmentVariables(configured.Trim());
+            return Path.GetFullPath(expanded, contentRoot);
+        }
+
+        var commonData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+        if (string.IsNullOrWhiteSpace(commonData))
+            commonData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+        return Path.Combine(commonData, "SPIL", "LabelPrintService", "designer-templates");
+    }
+
+    private void MigrateLegacyTemplates(string contentRoot)
+    {
+        var legacyRoot = Path.Combine(contentRoot, "designer-templates");
+        if (Path.GetFullPath(legacyRoot).Equals(Path.GetFullPath(_root), StringComparison.OrdinalIgnoreCase)
+            || !Directory.Exists(legacyRoot))
+            return;
+
+        foreach (var client in new[] { "opti", "erp" })
+        {
+            var sourceDir = Path.Combine(legacyRoot, client);
+            if (!Directory.Exists(sourceDir)) continue;
+
+            var targetDir = Path.Combine(_root, client);
+            Directory.CreateDirectory(targetDir);
+            foreach (var source in Directory.EnumerateFiles(sourceDir, "*.json"))
+            {
+                var target = Path.Combine(targetDir, Path.GetFileName(source));
+                if (!File.Exists(target))
+                    File.Copy(source, target);
+            }
+        }
     }
 
     public DesignSessionResponse CreateSession(DesignSessionRequest req)
@@ -38,8 +75,10 @@ public sealed class DesignStore
         var client = FieldCatalogs.NormalizeClient(req.Client);
         var id = Guid.NewGuid().ToString("N");
         JsonElement? template = null;
-        if (!string.IsNullOrWhiteSpace(req.TemplateId) && TryGet(client, req.TemplateId!, out var existing))
-            template = existing.Template;
+        if (req.Template is { ValueKind: JsonValueKind.Object } sent)
+            template = sent.Clone();
+        else if (!string.IsNullOrWhiteSpace(req.TemplateId) && TryGet(client, req.TemplateId!, out var existing))
+            template = existing.Template.Clone();
 
         var session = new DesignSessionResponse
         {
@@ -50,7 +89,7 @@ public sealed class DesignStore
             ReturnApp = string.IsNullOrWhiteSpace(req.ReturnApp) ? null : req.ReturnApp.Trim(),
             ExpiresAt = DateTimeOffset.UtcNow.Add(_sessionTtl),
             FieldCatalog = req.FieldCatalog is { Count: > 0 } ? req.FieldCatalog : FieldCatalogs.For(client).ToList(),
-            PreviewData = req.PreviewData is { ValueKind: JsonValueKind.Object } ? req.PreviewData : null,
+            PreviewData = req.PreviewData is { ValueKind: JsonValueKind.Object } pd ? pd.Clone() : null,
             Template = template,
         };
         _sessions[id] = session;
