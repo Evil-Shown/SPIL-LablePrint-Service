@@ -1,5 +1,6 @@
 using Microsoft.OpenApi.Models;
 using Spil.LabelPrint.Service.Compilation;
+using Spil.LabelPrint.Service.Design;
 
 if (args.Length >= 2 && string.Equals(args[0], "--compile", StringComparison.OrdinalIgnoreCase))
 {
@@ -33,6 +34,7 @@ builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
     p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddSingleton<LabelCompileService>();
 builder.Services.AddSingleton<PrinterTcpSender>();
+builder.Services.AddSingleton<DesignStore>();
 
 var app = builder.Build();
 app.UseCors();

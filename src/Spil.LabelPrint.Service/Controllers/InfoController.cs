@@ -16,6 +16,7 @@ public sealed class InfoController : ControllerBase
         brands = ZplUtil.Brands,
         printers = ZplUtil.PrinterCatalog,
         docs = "/swagger",
+        design = new { sessions = "/api/design-sessions", templates = "/api/templates", catalog = "/api/field-catalog" },
     });
 
     /// <summary>Brand → language map for ERP printer dropdowns.</summary>
