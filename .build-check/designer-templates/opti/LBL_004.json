@@ -1,0 +1,81 @@
+{
+  "id": "LBL_004",
+  "client": "opti",
+  "name": "New Label",
+  "labelType": "production",
+  "schemaVersion": 1,
+  "revision": 1,
+  "updatedAt": "2026-09-23T05:42:11.4138504+00:00",
+  "template": {
+    "id": "LBL_004",
+    "name": "New Label",
+    "width": 100,
+    "height": 60,
+    "unit": "mm",
+    "labelType": "production",
+    "printerDpi": 300,
+    "left": 3,
+    "right": 1,
+    "top": 1,
+    "bottom": 1,
+    "globalStyles": {
+      "fontFamily": "Arial, sans-serif",
+      "defaultFontSize": 9,
+      "backgroundColor": "#ffffff",
+      "defaultColor": "#000000"
+    },
+    "sections": {
+      "main": {
+        "enabled": true,
+        "display": "block",
+        "position": "relative",
+        "fields": [
+          {
+            "fieldKey": "title",
+            "type": "text",
+            "label": "Header Text",
+            "x": 18,
+            "y": 12,
+            "width": 240,
+            "height": 28,
+            "value": "Order: {{orderNumber}}",
+            "fontSize": 14,
+            "fontFamily": "Arial, sans-serif",
+            "fontWeight": "bold",
+            "textAlign": "left",
+            "color": "#000000",
+            "blackBox": false,
+            "rotation": 0,
+            "zIndex": 0,
+            "locked": false,
+            "hidden": false
+          },
+          {
+            "fieldKey": "mainBarcode",
+            "type": "barcode",
+            "label": "Main Barcode",
+            "x": 18,
+            "y": 45,
+            "width": 200,
+            "height": 52,
+            "source": [
+              "Barcode",
+              "barcode"
+            ],
+            "fallbackValue": "000000000",
+            "displayValue": true,
+            "barcodeFormat": "CODE128",
+            "rotation": 0,
+            "zIndex": 0,
+            "locked": false,
+            "hidden": false
+          }
+        ]
+      }
+    },
+    "createdAt": "2026-09-23T05:42:07.026Z",
+    "updatedAt": "2026-09-23T05:42:11.409Z",
+    "fieldMappings": {},
+    "client": "opti"
+  }
+}
