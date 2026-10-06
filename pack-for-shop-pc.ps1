@@ -14,7 +14,10 @@ New-Item -ItemType Directory -Force -Path $out | Out-Null
 dotnet publish $proj -c Release -r win-x64 --self-contained true -o $out
 
 Copy-Item (Join-Path $root "Start-LabelPrintService.bat") $out -Force
-Copy-Item (Join-Path $root "SHOP-PC-README.txt") $out -Force
+if (Test-Path (Join-Path $root "Deploy-PC-README.txt")) {
+    Copy-Item (Join-Path $root "Deploy-PC-README.txt") (Join-Path $out "README.txt") -Force
+}
+
 
 Write-Host ""
 Write-Host "DONE. Copy this folder to the other PC:"
