@@ -51,6 +51,7 @@ builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
 builder.Services.AddSingleton<LabelCompileService>();
 builder.Services.AddSingleton<PrinterTcpSender>();
 builder.Services.AddSingleton<DesignStore>();
+builder.Services.AddSingleton<SqlSchemaInspector>();
 
 var app = builder.Build();
 app.UseCors();

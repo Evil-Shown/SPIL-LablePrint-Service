@@ -11,7 +11,20 @@ param(
 $ErrorActionPreference = "Stop"
 $serviceName = "SpilLabelPrintService"
 $displayName = "SPIL Label Print Service"
-$root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$scriptPath = $MyInvocation.MyCommand.Path
+if ([string]::IsNullOrWhiteSpace($scriptPath)) {
+    throw @"
+Do not paste this script into PowerShell. That is why Path is null.
+
+On the shop PC:
+  1. Open the LabelPrintService folder (it contains Spil.LabelPrint.Service.exe).
+  2. Double-click Install-LabelPrintService.bat
+  3. Click Yes on the Administrator prompt.
+
+If the .bat opens in Notepad or VS Code: right-click it → Run as administrator.
+"@
+}
+$root = Split-Path -Parent $scriptPath
 $exe = Join-Path $root "Spil.LabelPrint.Service.exe"
 
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
