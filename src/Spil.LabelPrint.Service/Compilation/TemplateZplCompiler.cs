@@ -41,6 +41,7 @@ public static class TemplateZplCompiler
         sb.AppendLine("^PON");
         sb.AppendLine("^PQ1");
 
+        var seenTexts = new HashSet<string>(StringComparer.Ordinal);
         foreach (var field in CollectFields(template))
         {
             var type = Str(Get(field, "type"), "text").ToLowerInvariant();
@@ -160,19 +161,22 @@ public static class TemplateZplCompiler
 
             // text, header, and any unknown textual type
             var text = lookup.PrintText(field);
-            if (ZplUtil.IsEmpty(text)) continue;
+            var fmt = FormatFormula.Apply(field, lookup.ValueOf, text, seenTexts);
+            if (fmt.Text != null) text = fmt.Text;
+            if (fmt.Suppress || ZplUtil.IsEmpty(text)) continue;
             text = ZplUtil.Sanitize(text);
             var inverted = IsDarkFill(field) || lookup.MappingIsBlackBox(key);
-            var cssFont = Num(Get(field, "fontSize"), 12);
+            var cssFont = fmt.FontSize ?? Num(Get(field, "fontSize"), 12);
             var family = Family(Str(Get(field, "fontFamily"), globalFamily));
             var style = FontStyle.Regular;
             var weight = Str(Get(field, "fontWeight"));
-            if (weight.Equals("bold", StringComparison.OrdinalIgnoreCase) ||
-                (int.TryParse(weight, out var wn) && wn >= 600))
-                style |= FontStyle.Bold;
-            if (Str(Get(field, "fontStyle")).Equals("italic", StringComparison.OrdinalIgnoreCase))
-                style |= FontStyle.Italic;
-            var align = Str(Get(field, "textAlign")).ToLowerInvariant() switch
+            var bold = fmt.Bold ?? (weight.Equals("bold", StringComparison.OrdinalIgnoreCase) ||
+                (int.TryParse(weight, out var wn) && wn >= 600));
+            if (bold) style |= FontStyle.Bold;
+            var italic = fmt.Italic ?? Str(Get(field, "fontStyle")).Equals("italic", StringComparison.OrdinalIgnoreCase);
+            if (italic) style |= FontStyle.Italic;
+            var alignName = fmt.Align ?? Str(Get(field, "textAlign")).ToLowerInvariant();
+            var align = alignName switch
             {
                 "center" or "middle" => StringAlignment.Center,
                 "right" => StringAlignment.Far,

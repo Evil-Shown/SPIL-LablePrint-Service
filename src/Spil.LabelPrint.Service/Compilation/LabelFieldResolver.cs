@@ -219,6 +219,8 @@ internal sealed class LabelFieldResolver
         return "";
     }
 
+    public string ValueOf(string key) => GetDataString(key);
+
     private string GetDataString(string key)
     {
         if (_labelData.ValueKind != JsonValueKind.Object) return "";
