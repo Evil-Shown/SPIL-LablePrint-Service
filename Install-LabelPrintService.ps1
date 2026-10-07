@@ -1,10 +1,6 @@
 # Install SPIL Label Print Service as a Windows Service (auto-start, no console).
-# Run in an elevated PowerShell from the folder that contains Spil.LabelPrint.Service.exe
-#   Right-click PowerShell → Run as administrator
-#   cd C:\SPIL\LabelPrintService
-#   .\Install-LabelPrintService.ps1
-#
-# Other PCs must reach this host?  .\Install-LabelPrintService.ps1 -ListenLan
+# Shop PCs: double-click Install-LabelPrintService.bat (do not open this .ps1 in VS Code).
+# Other PCs must reach this host?  double-click Install-LabelPrintService-ListenLan.bat
 
 [CmdletBinding()]
 param(
@@ -20,7 +16,7 @@ $exe = Join-Path $root "Spil.LabelPrint.Service.exe"
 
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    throw "Run this script as Administrator (right-click PowerShell → Run as administrator)."
+    throw "Run Install-LabelPrintService.bat and accept the Administrator prompt. Do not open the .ps1 file."
 }
 
 if (-not (Test-Path $exe)) {

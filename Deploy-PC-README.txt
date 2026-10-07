@@ -3,16 +3,14 @@ SPIL Label Print Service — shop PC (no Git / no Visual Studio)
 1. Copy this WHOLE folder to the shop PC (USB, network share, zip).
    Example: C:\SPIL\LabelPrintService\
 
-2. Install as a Windows Service (always running, starts at boot).
-   Right-click PowerShell → Run as administrator, then:
+2. Double-click  Install-LabelPrintService.bat
+   Click Yes on the Administrator prompt.
+   Wait until it says installed and running.
 
-     cd C:\SPIL\LabelPrintService
-     Set-ExecutionPolicy -Scope Process Bypass
-     .\Install-LabelPrintService.ps1
+   If Opti on OTHER PCs must call this machine, double-click
+   Install-LabelPrintService-ListenLan.bat instead.
 
-   If Opti on OTHER PCs must call this machine:
-
-     .\Install-LabelPrintService.ps1 -ListenLan
+   Do NOT open the .ps1 files. They will open in VS Code / Notepad and will not install.
 
 3. On this PC, open in a browser:
    http://localhost:5088/api/health
@@ -33,10 +31,9 @@ Notes
 - The service name is SpilLabelPrintService. It restarts itself if it crashes.
 - To test without installing a service, you can still use Start-LabelPrintService.bat
   (keep that window open). Prefer the Windows Service on real shop PCs.
-- If Opti is on a DIFFERENT PC, use -ListenLan and set Service URL to
+- If Opti is on a DIFFERENT PC, use ListenLan and set Service URL to
   http://THIS-PC-LAN-IP:5088
-- To stop/remove the service (elevated PowerShell):
-    .\Uninstall-LabelPrintService.ps1
+- To stop/remove the service: double-click Uninstall-LabelPrintService.bat
   This does not delete the folder.
 - If health fails after install, Event Viewer → Windows Logs → Application
   (source SpilLabelPrintService).

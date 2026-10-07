@@ -1,13 +1,12 @@
 # Remove the SPIL Label Print Windows Service.
-# Run in an elevated PowerShell from this folder:
-#   .\Uninstall-LabelPrintService.ps1
+# Shop PCs: double-click Uninstall-LabelPrintService.bat
 
 $ErrorActionPreference = "Stop"
 $serviceName = "SpilLabelPrintService"
 
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    throw "Run this script as Administrator (right-click PowerShell → Run as administrator)."
+    throw "Run Uninstall-LabelPrintService.bat and accept the Administrator prompt. Do not open the .ps1 file."
 }
 
 $existing = Get-Service -Name $serviceName -ErrorAction SilentlyContinue

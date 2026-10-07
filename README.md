@@ -399,15 +399,10 @@ Shop floor PCs should run this as a **Windows Service** so it starts at boot and
 
 ```powershell
 .\pack-for-shop-pc.ps1
-# Copy dist\LabelPrintService to C:\SPIL\LabelPrintService on the PC
-# Elevated PowerShell:
-cd C:\SPIL\LabelPrintService
-Set-ExecutionPolicy -Scope Process Bypass
-.\Install-LabelPrintService.ps1
-Invoke-RestMethod http://localhost:5088/api/health
+# Copy dist\LabelPrintService to the shop PC, then double-click Install-LabelPrintService.bat
 ```
 
-Point Opti / Label Crafter at `http://localhost:5088`. Use `.\Install-LabelPrintService.ps1 -ListenLan` only if other machines must call this PC.
+Point Opti / Label Crafter at `http://localhost:5088`. Use `Install-LabelPrintService-ListenLan.bat` only if other machines must call this PC.
 
 ---
 
@@ -811,7 +806,7 @@ Grant the IIS application-pool identity Modify permission on a custom folder.
 | Build | `dotnet build` in `src/Spil.LabelPrint.Service` |
 | Local run | `dotnet run` → http://localhost:5088/api/health |
 | Publish (shop PC) | `.\pack-for-shop-pc.ps1` then copy `dist\LabelPrintService` |
-| Install (shop PC) | Elevated `.\Install-LabelPrintService.ps1` |
+| Install (shop PC) | Double-click `Install-LabelPrintService.bat` |
 | Publish (IIS) | `dotnet publish -c Release -o C:\inetpub\LabelPrintService` |
 | IIS pool | **No Managed Code**, Integrated |
 | Hosting | .NET 8 **Hosting Bundle** + `iisreset` |

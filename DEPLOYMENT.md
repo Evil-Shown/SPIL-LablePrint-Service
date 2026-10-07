@@ -18,8 +18,9 @@ cd "D:\Coding\SPIL LABS\Repos\Lable Print Service"
 * **Self-Contained Executable**: Embeds the full .NET runtime inside the build.
 * **Included Files**:
   * `Spil.LabelPrint.Service.exe`
-  * `Install-LabelPrintService.ps1` (Windows Service, auto-start)
-  * `Uninstall-LabelPrintService.ps1`
+  * `Install-LabelPrintService.bat` (double-click — Windows Service, auto-start)
+  * `Install-LabelPrintService-ListenLan.bat` (if other PCs must call this machine)
+  * `Uninstall-LabelPrintService.bat`
   * `Start-LabelPrintService.bat` (optional test window)
   * `README.txt` (quick guide for shop technicians)
   * Required DLLs and runtime dependencies
@@ -36,20 +37,13 @@ cd "D:\Coding\SPIL LABS\Repos\Lable Print Service"
 
 2. **Install as a Windows Service** (always running, starts at boot).
 
-   Open **PowerShell as Administrator** in `C:\SPIL\LabelPrintService`:
+   Double-click `Install-LabelPrintService.bat` and accept the Administrator prompt.
 
-   ```powershell
-   Set-ExecutionPolicy -Scope Process Bypass
-   .\Install-LabelPrintService.ps1
-   ```
+   Do **not** open the `.ps1` files (they open in VS Code / Notepad and do nothing).
 
-   Opti on other PCs must call this machine:
+   Opti on other PCs must call this machine: double-click `Install-LabelPrintService-ListenLan.bat`.
 
-   ```powershell
-   .\Install-LabelPrintService.ps1 -ListenLan
-   ```
-
-   Default URL: `http://127.0.0.1:5088` (localhost only, unless `-ListenLan`).
+   Default URL: `http://127.0.0.1:5088` (localhost only, unless ListenLan).
 
 3. **Verify Health**:
    Open a browser on that PC or over the network:
@@ -77,10 +71,7 @@ This is the supported way to run on user PCs. The process:
 * Restarts automatically if it crashes
 * Listens on `http://127.0.0.1:5088` unless you pass `-ListenLan`
 
-```powershell
-# From C:\SPIL\LabelPrintService in an elevated PowerShell
-.\Install-LabelPrintService.ps1
-```
+Double-click `Install-LabelPrintService.bat`.
 
 Useful commands after install:
 
@@ -92,9 +83,7 @@ Invoke-RestMethod http://localhost:5088/api/health
 
 To stop and unregister (files stay on disk):
 
-```powershell
-.\Uninstall-LabelPrintService.ps1
-```
+Double-click `Uninstall-LabelPrintService.bat`.
 
 To test without installing a service, double-click `Start-LabelPrintService.bat` and keep that window open.
 
