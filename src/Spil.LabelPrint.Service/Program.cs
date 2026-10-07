@@ -13,7 +13,23 @@ if (args.Length >= 2 && string.Equals(args[0], "--compile", StringComparison.Ord
     return;
 }
 
-var builder = WebApplication.CreateBuilder(args);
+// Windows services start with cwd = System32. Pin content root to the exe folder
+// so appsettings.json and designer files resolve when hosted by SCM.
+Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = AppContext.BaseDirectory,
+});
+
+builder.Host.UseWindowsService(options =>
+{
+    options.ServiceName = "SpilLabelPrintService";
+});
+
+if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ASPNETCORE_URLS")))
+    builder.WebHost.UseUrls("http://127.0.0.1:5088");
 
 builder.Services.AddControllers().AddJsonOptions(o =>
 {

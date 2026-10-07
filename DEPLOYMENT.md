@@ -18,7 +18,9 @@ cd "D:\Coding\SPIL LABS\Repos\Lable Print Service"
 * **Self-Contained Executable**: Embeds the full .NET runtime inside the build.
 * **Included Files**:
   * `Spil.LabelPrint.Service.exe`
-  * `Start-LabelPrintService.bat` (one-click runner)
+  * `Install-LabelPrintService.ps1` (Windows Service, auto-start)
+  * `Uninstall-LabelPrintService.ps1`
+  * `Start-LabelPrintService.bat` (optional test window)
   * `README.txt` (quick guide for shop technicians)
   * Required DLLs and runtime dependencies
 
@@ -32,18 +34,24 @@ cd "D:\Coding\SPIL LABS\Repos\Lable Print Service"
    C:\SPIL\LabelPrintService\
    ```
 
-2. **Configure Windows Firewall** *(Only required if other machines/devices connect to this PC)*:
-   Open PowerShell as Administrator:
+2. **Install as a Windows Service** (always running, starts at boot).
+
+   Open **PowerShell as Administrator** in `C:\SPIL\LabelPrintService`:
+
    ```powershell
-   New-NetFirewallRule -DisplayName "SPIL Label Print Service" -Direction Inbound -Protocol TCP -LocalPort 5088 -Action Allow
+   Set-ExecutionPolicy -Scope Process Bypass
+   .\Install-LabelPrintService.ps1
    ```
 
-3. **Start the Service**:
-   Double-click `Start-LabelPrintService.bat`.
-   * Keep the console window open while printing.
-   * Default URL: `http://0.0.0.0:5088`
+   Opti on other PCs must call this machine:
 
-4. **Verify Health**:
+   ```powershell
+   .\Install-LabelPrintService.ps1 -ListenLan
+   ```
+
+   Default URL: `http://127.0.0.1:5088` (localhost only, unless `-ListenLan`).
+
+3. **Verify Health**:
    Open a browser on that PC or over the network:
    * **Health check**: [http://localhost:5088/api/health](http://localhost:5088/api/health) (returns `{"ok": true}`)
    * **Swagger UI**: [http://localhost:5088/swagger](http://localhost:5088/swagger)
@@ -61,21 +69,36 @@ In Opti (**Configuration → Labels**):
 
 ---
 
-## 4. Optional: Run as Windows Service (Auto-Start on Boot)
+## 4. Windows Service (shop PCs)
 
-If you prefer the service to run silently in the background without needing a user logged in:
+This is the supported way to run on user PCs. The process:
 
-Open PowerShell as Administrator:
+* Starts when Windows boots (no login, no `.bat`, no console window)
+* Restarts automatically if it crashes
+* Listens on `http://127.0.0.1:5088` unless you pass `-ListenLan`
+
 ```powershell
-sc.exe create "SpilLabelPrintService" binPath= "C:\SPIL\LabelPrintService\Spil.LabelPrint.Service.exe" start= auto
-sc.exe start "SpilLabelPrintService"
+# From C:\SPIL\LabelPrintService in an elevated PowerShell
+.\Install-LabelPrintService.ps1
 ```
 
-To stop or remove the service later:
+Useful commands after install:
+
 ```powershell
-sc.exe stop "SpilLabelPrintService"
-sc.exe delete "SpilLabelPrintService"
+Get-Service SpilLabelPrintService
+Restart-Service SpilLabelPrintService
+Invoke-RestMethod http://localhost:5088/api/health
 ```
+
+To stop and unregister (files stay on disk):
+
+```powershell
+.\Uninstall-LabelPrintService.ps1
+```
+
+To test without installing a service, double-click `Start-LabelPrintService.bat` and keep that window open.
+
+If health fails: Event Viewer → Windows Logs → Application → source **SpilLabelPrintService**.
 
 ---
 

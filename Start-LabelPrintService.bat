@@ -3,6 +3,7 @@ title SPIL Label Print Service
 cd /d "%~dp0"
 
 echo Starting Label Print Service on http://localhost:5088
+echo This is a TEST window. Shop PCs should use Install-LabelPrintService.ps1 instead.
 echo Keep this window open while printing from Opti.
 echo.
 echo Health:  http://localhost:5088/api/health

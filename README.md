@@ -30,15 +30,16 @@ Repo: [github.com/Evil-Shown/SPIL-LablePrint-Service](https://github.com/Evil-Sh
 4. [Who uses this (Opti vs ERP)](#who-uses-this-opti-vs-erp)
 5. [ERP integration](#erp-integration)
 6. [Test the API](#test-the-api)
-7. [Deploy to IIS (production)](#deploy-to-iis-production)
-8. [Configuration](#configuration)
-9. [API reference](#api-reference)
-10. [Template compile (any Labels JSON)](#template-compile-any-labels-json)
-11. [Metro layout (ERP built-in)](#metro-layout-erp-built-in)
-12. [Batch printing](#batch-printing)
-13. [Optional: send from the server](#optional-send-from-the-server)
-14. [Printer brands](#printer-brands)
-15. [Troubleshooting](#troubleshooting)
+7. [Deploy to shop PCs (Windows Service)](#deploy-to-shop-pcs-windows-service)
+8. [Deploy to IIS (production)](#deploy-to-iis-production)
+9. [Configuration](#configuration)
+10. [API reference](#api-reference)
+11. [Template compile (any Labels JSON)](#template-compile-any-labels-json)
+12. [Metro layout (ERP built-in)](#metro-layout-erp-built-in)
+13. [Batch printing](#batch-printing)
+14. [Optional: send from the server](#optional-send-from-the-server)
+15. [Printer brands](#printer-brands)
+16. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -389,6 +390,24 @@ $res.zpl | Set-Content -Encoding utf8NoBOM label.zpl
 ```
 
 Send to a printer (from Opti or any TCP 9100 client), or use the virtual printer script in `spil-opti/scripts/zpl_virtual_printer.py`.
+
+---
+
+## Deploy to shop PCs (Windows Service)
+
+Shop floor PCs should run this as a **Windows Service** so it starts at boot and stays up with no console window. See [DEPLOYMENT.md](DEPLOYMENT.md) for the full pack-and-copy steps.
+
+```powershell
+.\pack-for-shop-pc.ps1
+# Copy dist\LabelPrintService to C:\SPIL\LabelPrintService on the PC
+# Elevated PowerShell:
+cd C:\SPIL\LabelPrintService
+Set-ExecutionPolicy -Scope Process Bypass
+.\Install-LabelPrintService.ps1
+Invoke-RestMethod http://localhost:5088/api/health
+```
+
+Point Opti / Label Crafter at `http://localhost:5088`. Use `.\Install-LabelPrintService.ps1 -ListenLan` only if other machines must call this PC.
 
 ---
 
@@ -791,7 +810,9 @@ Grant the IIS application-pool identity Modify permission on a custom folder.
 |------|------------------|
 | Build | `dotnet build` in `src/Spil.LabelPrint.Service` |
 | Local run | `dotnet run` → http://localhost:5088/api/health |
-| Publish | `dotnet publish -c Release -o C:\inetpub\LabelPrintService` |
+| Publish (shop PC) | `.\pack-for-shop-pc.ps1` then copy `dist\LabelPrintService` |
+| Install (shop PC) | Elevated `.\Install-LabelPrintService.ps1` |
+| Publish (IIS) | `dotnet publish -c Release -o C:\inetpub\LabelPrintService` |
 | IIS pool | **No Managed Code**, Integrated |
 | Hosting | .NET 8 **Hosting Bundle** + `iisreset` |
 | Test compile | POST `/api/labels/compile` with LBL_004 + piece JSON |
